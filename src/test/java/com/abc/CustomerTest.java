@@ -32,6 +32,32 @@ public class CustomerTest {
                 "\n" +
                 "Total In All Accounts $3,900.00", henry.getStatement());
     }
+    
+    @Test //Test negative statement value
+    public void testNegativeBalance(){
+
+        Account checkingAccount = new Account(Account.CHECKING);
+        Account savingsAccount = new Account(Account.SAVINGS);
+
+        Customer henry = new Customer("Henry").openAccount(checkingAccount).openAccount(savingsAccount);
+
+        checkingAccount.deposit(100.0);
+        savingsAccount.deposit(4000.0);
+        savingsAccount.withdraw(4100.0);
+
+        assertEquals("Statement for Henry\n" +
+                "\n" +
+                "Checking Account\n" +
+                "  deposit $100.00\n" +
+                "Total $100.00\n" +
+                "\n" +
+                "Savings Account\n" +
+                "  deposit $4,000.00\n" +
+                "  withdrawal $4,100.00\n" +
+                "Total -$100.00\n" +
+                "\n" +
+                "Total In All Accounts $0.00", henry.getStatement());
+    }
 
     @Test
     public void testOneAccount(){
@@ -51,6 +77,7 @@ public class CustomerTest {
     public void testThreeAcounts() {
         Customer oscar = new Customer("Oscar")
                 .openAccount(new Account(Account.SAVINGS));
+        oscar.openAccount(new Account(Account.CHECKING));
         oscar.openAccount(new Account(Account.CHECKING));
         assertEquals(3, oscar.getNumberOfAccounts());
     }

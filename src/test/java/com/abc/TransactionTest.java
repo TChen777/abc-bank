@@ -10,4 +10,10 @@ public class TransactionTest {
         Transaction t = new Transaction(5);
         assertTrue(t instanceof Transaction);
     }
+    
+    @Test
+    public void transaction() {
+        Transaction t = new Transaction(5);
+        assertTrue(t.getTransDate() instanceof Date);
+    }
 }
