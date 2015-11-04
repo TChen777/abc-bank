@@ -12,5 +12,9 @@ public class Transaction {
         this.amount = amount;
         this.transactionDate = DateProvider.getInstance().now();
     }
+    
+    protected Date getTransDate() {
+        return transactionDate;
+    }
 
 }

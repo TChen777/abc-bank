@@ -28,15 +28,28 @@ public class Customer {
     }
 
     public double totalInterestEarned() {
-        double total = 0;
+        double total = 0.0;
         for (Account a : accounts)
             total += a.interestEarned();
         return total;
     }
 
     public String getStatement() {
-        String statement = null;
-        statement = "Statement for " + name + "\n";
+        //Can use a string builder to use less memory and improve performance
+      
+        StringBuilder statement = new StringBuilder();
+        statement.append("Statement for " + name + "\n")
+        double total = 0.0;
+        for (Account a : accounts) {
+            statement.append("\n" + statementForAccount(a) + "\n");
+            total += a.sumTransactions();
+        }
+        statement.append( "\nTotal In All Accounts " + toDollars(total) );
+        return statement.toString();
+        
+        /*
+        //String statement = null;  Remove this line
+        String statement = "Statement for " + name + "\n";
         double total = 0.0;
         for (Account a : accounts) {
             statement += "\n" + statementForAccount(a) + "\n";
@@ -44,6 +57,7 @@ public class Customer {
         }
         statement += "\nTotal In All Accounts " + toDollars(total);
         return statement;
+        */
     }
 
     private String statementForAccount(Account a) {
@@ -73,6 +87,9 @@ public class Customer {
     }
 
     private String toDollars(double d){
-        return String.format("$%,.2f", abs(d));
+        //return String.format("$%,.2f", d);
+      return (d < 0 ? "-" : "") + String.format("$%,.2f", abs(d));        //Will print [sign][$][Value] Ex: -$9.19
     }
+    
+    
 }
