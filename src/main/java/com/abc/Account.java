@@ -17,20 +17,24 @@ public class Account {
     private double balance;
     private List<Transaction> transactions;
 
+    //Constructor
     public Account(int accountType) {
         this.accountType = accountType;
         this.transactions = new ArrayList<Transaction>();
         this.balance = 0;
     }
 
+    //Get the current balance
     public double getBalance() {
         return balance;
     }
     
+    //Get the list of transactions
     public List<Transaction> getTransactions() {
         return transactions;
     }
     
+    //A deposit transaction and update the balance
     public void deposit(double amount) {
         if (amount <= 0) {
             throw new IllegalArgumentException("amount must be greater than zero");
@@ -40,6 +44,7 @@ public class Account {
         }
     }
 
+    //A withdraw transaction and update the balance
     public void withdraw(double amount) {
         if (amount <= 0) {
             throw new IllegalArgumentException("amount must be greater than zero");
@@ -49,6 +54,7 @@ public class Account {
         }
     }
 
+    //Method used to calculate interest per year for the various types of accounts
     public double interestEarned() {
         double amount = sumTransactions();
         switch(accountType){
@@ -85,12 +91,13 @@ public class Account {
                   if (curDate.getDate() > latestTrans.getDate() && curDate.getDate() - latestTrans.getDate() > 10) {
                     return amount * 0.05;
                   }
-                  //If days are not in order count the last transaction difference from the end of month and add the rest
+                  //If days are not in order count the last transaction date to the end of month and add the remaining days of the following month
                   else if (curDate.getDate() < latestTrans.getDate()) {
                     
                     Calendar calendar = Calendar.getInstance();  
                     calendar.setTime(latestTrans); 
                     
+                    //Use calendar to obtain number of total day in that month
                     int days = (calendar.getActualMaximum(Calendar.DAY_OF_MONTH) - latestTrans.getDate() )+ curDate.getDate();
                     
                     if (days > 10)
@@ -113,6 +120,7 @@ public class Account {
     }
     */
     
+    //Returns the sum of all transactions
     public double sumTransactions() {
         double amount = 0.0;
         for (Transaction t: transactions)
@@ -120,6 +128,7 @@ public class Account {
         return amount;
     }
 
+    //returns the account type
     public int getAccountType() {
         return accountType;
     }

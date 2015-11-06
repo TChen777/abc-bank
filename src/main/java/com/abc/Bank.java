@@ -7,14 +7,17 @@ public class Bank {
   
     private List<Customer> customers;
 
+    //Constructor
     public Bank() {
         customers = new ArrayList<Customer>();
     }
 
+    //Adds customer to the bank
     public void addCustomer(Customer customer) {
         customers.add(customer);
     }
 
+    //Prints a formatted string of bank's customer detail
     public String customerSummary() {
         String summary = "Customer Summary";
         for (Customer c : customers)
@@ -28,6 +31,7 @@ public class Bank {
         return number + " " + (number == 1 ? word : word + "s");
     }
 
+    //returns the total interest paid by the bank to all its customers
     public double totalInterestPaid() {
         double total = 0.0;
         for(Customer c: customers)
@@ -35,6 +39,7 @@ public class Bank {
         return total;
     }
 
+    //obtain the first customer
     public String getFirstCustomer() {
         if (customers.size() < 1) {
           return "Error";
