@@ -4,6 +4,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class CustomerTest {
 
@@ -60,6 +61,12 @@ public class CustomerTest {
     }
 
     @Test
+    public void testname(){
+        Customer oscar = new Customer("Oscar").openAccount(new Account(Account.SAVINGS));
+        assertEquals(oscar.getName(), "Oscar");
+    }
+    
+    @Test
     public void testOneAccount(){
         Customer oscar = new Customer("Oscar").openAccount(new Account(Account.SAVINGS));
         assertEquals(1, oscar.getNumberOfAccounts());
@@ -81,4 +88,18 @@ public class CustomerTest {
         oscar.openAccount(new Account(Account.CHECKING));
         assertEquals(3, oscar.getNumberOfAccounts());
     }
+    
+    @Test
+    public void testTransfers(){
+        Account checkingAccount = new Account(Account.CHECKING);
+        Account savingsAccount = new Account(Account.SAVINGS);
+  
+        Customer henry = new Customer("Henry").openAccount(checkingAccount).openAccount(savingsAccount);
+  
+        checkingAccount.deposit(500.0);
+        savingsAccount.deposit(4000.0);
+        
+        assertTrue(henry.accTransfer(savingsAccount, checkingAccount, 500.0));
+    }
+    
 }

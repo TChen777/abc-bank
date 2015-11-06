@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Bank {
+  
     private List<Customer> customers;
 
     public Bank() {
@@ -28,7 +29,7 @@ public class Bank {
     }
 
     public double totalInterestPaid() {
-        double total = 0;
+        double total = 0.0;
         for(Customer c: customers)
             total += c.totalInterestEarned();
         return total;

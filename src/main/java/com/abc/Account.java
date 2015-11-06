@@ -7,33 +7,47 @@ import java.util.Date;
 
 public class Account {
 
+    //If types of accounts become numerous, probably best to create an abstract Acount class
+    //Also can use enums
     public static final int CHECKING = 0;
     public static final int SAVINGS = 1;
     public static final int MAXI_SAVINGS = 2;
 
     private final int accountType;
-    public List<Transaction> transactions;
+    private double balance;
+    private List<Transaction> transactions;
 
     public Account(int accountType) {
         this.accountType = accountType;
         this.transactions = new ArrayList<Transaction>();
+        this.balance = 0;
     }
 
+    public double getBalance() {
+        return balance;
+    }
+    
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+    
     public void deposit(double amount) {
         if (amount <= 0) {
             throw new IllegalArgumentException("amount must be greater than zero");
         } else {
             transactions.add(new Transaction(amount));
+            balance += amount;
         }
     }
 
-public void withdraw(double amount) {
-    if (amount <= 0) {
-        throw new IllegalArgumentException("amount must be greater than zero");
-    } else {
-        transactions.add(new Transaction(-amount));
+    public void withdraw(double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("amount must be greater than zero");
+        } else {
+            transactions.add(new Transaction(-amount));
+            balance -= amount;
+        }
     }
-}
 
     public double interestEarned() {
         double amount = sumTransactions();
@@ -51,25 +65,19 @@ public void withdraw(double amount) {
                     return 20;
             */
             case MAXI_SAVINGS:
-              /*
-                if (amount <= 1000)
-                    return amount * 0.02;
-                if (amount <= 2000)
-                    return 20 + (amount-1000) * 0.05;
-                return 70 + (amount-2000) * 0.1;
-                */
               
                 Date latestTrans = null;
+                
                 //Find the latest withdrawal
-                for (int i = 0; i < transactions.size(); I++) {
-                    if (transactions.get(i).amount < 0)
+                for (int i = 0; i < transactions.size(); i++) {
+                    if (transactions.get(i).getAmount() < 0)
                       latestTrans = transactions.get(i).getTransDate();
                 }
                 Date curDate = DateProvider.getInstance().now();
                 
                 if (latestTrans == null) {
                   //if no withdrawals, return 0
-                  return 0;
+                  return amount * 0.05;
                 }
                 else {
                   //Compare the dates
@@ -77,9 +85,14 @@ public void withdraw(double amount) {
                   if (curDate.getDate() > latestTrans.getDate() && curDate.getDate() - latestTrans.getDate() > 10) {
                     return amount * 0.05;
                   }
-                  //If days are not in order count till 30 and add the rest
+                  //If days are not in order count the last transaction difference from the end of month and add the rest
                   else if (curDate.getDate() < latestTrans.getDate()) {
-                    int days = 30 - latestTrans.getDate() + curDate.getDate();    //Can be more accurate by using a month-day map
+                    
+                    Calendar calendar = Calendar.getInstance();  
+                    calendar.setTime(latestTrans); 
+                    
+                    int days = (calendar.getActualMaximum(Calendar.DAY_OF_MONTH) - latestTrans.getDate() )+ curDate.getDate();
+                    
                     if (days > 10)
                       return amount * 0.05;
                     else
@@ -93,7 +106,6 @@ public void withdraw(double amount) {
         }
     }
     
-    
     /*
      * Unnecessary
     public double sumTransactions() {
@@ -101,24 +113,26 @@ public void withdraw(double amount) {
     }
     */
     
-    private double sumTransactions() {
+    public double sumTransactions() {
         double amount = 0.0;
         for (Transaction t: transactions)
-            amount += t.amount;
+            amount += t.getAmount();
         return amount;
     }
 
     public int getAccountType() {
         return accountType;
     }
-    
-    //Added way to change account type
-    public void changeAccountType(int accType) {
-      this.accountType = accType;
-    }
 
-    //Estimate of a daily interest eraned
-    public double interestEarnedDaily() {
-      return interestEarned() / (30 * 12) ;
+    //Accrue daily interest
+    //Perhaps some daily function calls this one to accrue interest
+    public void accrueDailyInterest() {
+        balance += interestEarned() / 365 ;
+    }
+    
+    //Used to find interest earned 
+    public double currentInterestEarned() {
+        double sumTrans = sumTransactions();
+        return (sumTrans > 0 ? balance - sumTrans : 0.0);
     }
 }

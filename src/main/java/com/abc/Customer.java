@@ -6,6 +6,7 @@ import java.util.List;
 import static java.lang.Math.abs;
 
 public class Customer {
+  
     private String name;
     private List<Account> accounts;
 
@@ -38,58 +39,63 @@ public class Customer {
         //Can use a string builder to use less memory and improve performance
       
         StringBuilder statement = new StringBuilder();
-        statement.append("Statement for " + name + "\n")
+        statement.append("Statement for " + name + "\n");
         double total = 0.0;
         for (Account a : accounts) {
             statement.append("\n" + statementForAccount(a) + "\n");
             total += a.sumTransactions();
         }
-        statement.append( "\nTotal In All Accounts " + toDollars(total) );
+        statement.append( "\nTotal In All Accounts " + (total < 0.0 ? "-" : "") + toDollars(total) );     //Adds a negative sign if amount is less than 0
         return statement.toString();
         
-        /*
-        //String statement = null;  Remove this line
-        String statement = "Statement for " + name + "\n";
-        double total = 0.0;
-        for (Account a : accounts) {
-            statement += "\n" + statementForAccount(a) + "\n";
-            total += a.sumTransactions();
-        }
-        statement += "\nTotal In All Accounts " + toDollars(total);
-        return statement;
-        */
     }
 
     private String statementForAccount(Account a) {
-        String s = "";
+      
+      StringBuilder accState = new StringBuilder();
 
        //Translate to pretty account type
         switch(a.getAccountType()){
             case Account.CHECKING:
-                s += "Checking Account\n";
+                accState.append("Checking Account\n");
                 break;
             case Account.SAVINGS:
-                s += "Savings Account\n";
+                accState.append("Savings Account\n");
                 break;
             case Account.MAXI_SAVINGS:
-                s += "Maxi Savings Account\n";
+                accState.append("Maxi Savings Account\n");
                 break;
         }
 
         //Now total up all the transactions
         double total = 0.0;
-        for (Transaction t : a.transactions) {
-            s += "  " + (t.amount < 0 ? "withdrawal" : "deposit") + " " + toDollars(t.amount) + "\n";
-            total += t.amount;
+        for (Transaction t : a.getTransactions()) {
+            accState.append("  " + (t.getAmount() < 0.0 ? "withdrawal" : "deposit") + " " + toDollars(t.getAmount()) + "\n");
+            total += t.getAmount();
         }
-        s += "Total " + toDollars(total);
-        return s;
+        accState.append("Total " + (total < 0.0 ? "-" : "") + toDollars(total));        //Adds a negative sign if amount is less than 0
+        return accState.toString();
     }
 
     private String toDollars(double d){
-        //return String.format("$%,.2f", d);
-      return (d < 0 ? "-" : "") + String.format("$%,.2f", abs(d));        //Will print [sign][$][Value] Ex: -$9.19
+      return String.format("$%,.2f", abs(d));
     }
     
-    
+    public boolean accTransfer(Account fromAcc, Account toAcc, double amount) {
+        //Check both accounts are in fact with the customer
+        if (amount > 0.0 && accounts.contains(fromAcc) && accounts.contains(fromAcc)) {
+            //Check if customer has enough to transfer
+            if (fromAcc.getBalance() > amount) {
+                fromAcc.withdraw(amount);
+                toAcc.deposit(amount);
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
 }
